@@ -46,6 +46,7 @@ class Model:
         self._bestSoluzione = []
         self._bestScore = 0
         parziale = []
+        self._mesiVisitati = dict.fromkeys(range(1,13), 0)
         for n in self._graph.nodes:
             parziale.append(n)
             self._ricorsione(parziale, n.duration)
@@ -61,12 +62,15 @@ class Model:
 
         for n in self._graph.neighbors(parziale[-1]):
             print("continua")
-            if n not in parziale and self.amm(n, parziale) and n.duration > durataPrec:
+            if n not in parziale and self._mesiVisitati[n.datetime.month] <= 2 and n.duration > durataPrec:
                 print("aggiunge")
                 parziale.append(n)
+                self._mesiVisitati[n.datetime.month] += 1
                 self._ricorsione(parziale, n.duration)
+                self._mesiVisitati[n.datetime.month] -= 1
                 parziale.pop()
 
+    #sostituito con dict.fromkeys(range(1,13),0)
     def amm(self, n, parziale):
         mese = n.datetime.month
         tot = 0
